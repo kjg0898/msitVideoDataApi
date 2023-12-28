@@ -1,3 +1,5 @@
+package com.msit;
+
 import com.google.gson.*;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.Router;
@@ -37,7 +39,7 @@ public class VideoDataApi extends AbstractVerticle {
                 }
             } catch (JsonSyntaxException e) {
                 // json 이 아닐때 원시 데이터 출력
-                logger.info("Received raw data: {}", jsonBody);
+                logger.info("Received non-JSON data: {}", jsonBody);
 
                 String convertedJson = DataConversionUtil.attemptToConvertToJson(jsonBody);
                 if (convertedJson.isEmpty()) { //키-값 쌍에서 JSON으로 변환할 수 없는 경우
@@ -47,10 +49,10 @@ public class VideoDataApi extends AbstractVerticle {
                     }
                 }
 
-                if (!convertedJson.isEmpty()) {
+                if (!convertedJson.isEmpty() && DataConversionUtil.isMeaningful(convertedJson)) {
                     logger.info("Converted to JSON-like data: {}", convertedJson);
                 } else {
-                    logger.info("Received non-JSON data (could not convert): {}", jsonBody);
+                    logger.info("could not convert JSON format");
                 }
             }
             // 파라미터 데이터 길이

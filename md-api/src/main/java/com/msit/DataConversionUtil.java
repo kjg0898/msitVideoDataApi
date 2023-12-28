@@ -1,13 +1,12 @@
+package com.msit;
+
 import com.google.gson.*;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * packageName    : PACKAGE_NAME
- * fileName       : DataConversionUtil.java
+ * fileName       : com.mist.DataConversionUtil.java
  * author         : kjg08
  * date           : 2023-12-27
  * description    :
@@ -19,6 +18,31 @@ import org.slf4j.LoggerFactory;
 public class DataConversionUtil {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        // json 으로 변환한 값이  의미있는 값인지 체크
+    public static boolean isMeaningful(String jsonData) {
+        if(jsonData == null || jsonData.trim().isEmpty()) {
+            return false; // Check for null or empty to avoid parsing errors
+        }
+
+        try {
+            JsonElement element = JsonParser.parseString(jsonData);
+
+            if (element.isJsonObject()) {
+                JsonObject obj = element.getAsJsonObject();
+                return obj.size() > 0; // A meaningful JSON object has at least one key-value pair
+            } else if (element.isJsonArray()) {
+                JsonArray array = element.getAsJsonArray();
+                return array.size() > 0; // A meaningful JSON array has at least one element
+            } else {
+                // It's not a JSON object or array, might be a JSON primitive or null
+                return false;
+            }
+        } catch (JsonSyntaxException e) {
+            return false; // jsonData was not a valid JSON, so it's not meaningful
+        }
+    }
+
 
     // value 값의 길이 반환
     public static int calculateDataLength(String data) {
